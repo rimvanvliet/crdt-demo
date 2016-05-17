@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta name="description" content="CRDT demo logoot">
+  <meta name="author" content="Ruud van Vliet">
+  <!--link rel="icon" href="favicon.ico"-->
+
+  <title>CRDT Demo</title>
+
+  <!-- Latest compiled and minified CSS Bootstrap & jQuery-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+
+
+  <!-- Custom styles for this template -->
+  <link href="./css/crdtDemo.css" rel="stylesheet">
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+    </head>
+
+    <body>
+      <div class="container">
+
+        <div class="page-header">
+          <h1>CRDT demo </h1>
+          <p class="lead">By <a href="mailto:ruud.van.vliet@trivento.nl">Ruud van Vliet, <a href="http://trivento-spark.nl">Trivento Spark!</a><br>
+            Based on the <a href="https://hal.inria.fr/inria-00336191/PDF/main.pdf">Logoot</a> implementation of <a href="https://github.com/bnoguchi/logoot">Brian Noguchi</a> </p>
+          </div>
+
+          <h3>Conflict-free replicated data type</h3>
+          <p>The two blocks on the screen represent 2 nodes in a network that maintain a common resource: a string of text. On both nodes, text can be inserted, or a character deleted, on a given position. Each inserted or deleted character results in a separate command that can be sent in random order (the merge is 'commutative') and multiple times (the merge is 'idempotent') to the other node. With the button between the blocks, the 'nodes' can be reconnected or disconnected again.</p>
+          <p>The demo is based on the <a href="https://hal.inria.fr/inria-00336191/PDF/main.pdf">Logoot</a> implementation of <a href="https://github.com/bnoguchi/logoot">Brian Noguchi</a>, with two edits in logoot.js to make the operations idempotent, and logoot-causal, ensuring causality.</p>
+
+          <div class="row">
+            <form class="form-inline" role="form">
+              <div class="form-group col-md-3 error">
+                <input type="text" class="form-control crdt-position"  placeholder="Pos." id="lA_insPos">
+                <input type="text" class="form-control crdt-text" placeholder="Text" id="lA_insTxt">
+                <button type="button" class="btn btn-default" id="lA_insertView">Insert</button>
+                <p class="crdt-error" id="lA_insError">&nbsp;</p>
+              </div>
+              <div class="form-group col-md-2">
+                <input type="text" class="form-control crdt-position" placeholder="Pos." id="lA_delPos">
+                <button type="button" class="btn btn-default" id="lA_deleteView">Delete</button>
+                <p class="crdt-error" id="lA_delError">&nbsp;</p>
+              </div>
+              <div class="col-md-2 crdt-invisible" align="center" id="connector">
+                <button type="button" class="btn btn-primary" id="sync">Synchronise</button>
+                <p class="crdt-error">&nbsp;</p>
+              </div>
+              <div class="form-group col-md-3">
+                <input type="text" class="form-control crdt-position" placeholder="Pos." id="lB_insPos">
+                <input type="text" class="form-control crdt-text" placeholder="Text" id="lB_insTxt">
+                <button type="button" class="btn btn-default" id="lB_insertView">Insert</button>
+                <p class="crdt-error" id="lB_insError">&nbsp;</p>
+              </div>
+              <div class="form-group col-md-2">
+                <input type="text" class="form-control crdt-position" placeholder="Pos." id="lB_delPos">
+                <button type="button" class="btn btn-default" id="lB_deleteView">Delete</button>
+                <p class="crdt-error" id="lB_delError">&nbsp;</p>
+              </div>
+            </form>
+          </div>
+
+          <!-- Row with the text -->
+
+          <div class="row">
+            <div class="col-md-5" id="lA_txt">&nbsp;</div>
+            <div class="col-md-2 crdt-invisible" align=center>&nbsp;</div>
+            <div class="col-md-5" id="lB_txt">&nbsp;</div>
+          </div>
+
+          <!-- Row with the json representation of the object-->
+
+          <div class="row"><div class="col-md-5"><xmp id="lA_json"></xmp></div>
+            <div class="col-md-2 crdt-invisible" align=center>&nbsp;</div>
+            <div class="col-md-5"><xmp id="lB_json"></xmp></div>
+          </div>
+
+          <!-- Row with the stack of ops-->
+
+          <div class="row">
+            <div class="col-md-5">
+              <div class="row">
+                <div class="col-md-6" id="lA_ownCops"></div>
+                <div class="col-md-6" id="lA_recCops"></div>
+              </div>
+            </div>
+            <div class="col-md-2 crdt-invisible" align=center>&nbsp;</div>
+            <div class="col-md-5">
+              <div class="row">
+                <div class="col-md-6" id="lB_ownCops"></div>
+                <div class="col-md-6" id="lB_recCops"></div>
+            </div>
+          </div>
+        </div>
+
+
+        </div> <!-- /container -->
+
+        <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+        <script src="build/crdtDemoBrowserified.js"></script>
+
+
+      </body>
+  </html>

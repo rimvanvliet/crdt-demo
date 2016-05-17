@@ -1,0 +1,20 @@
+{
+  "name": "crdtDemo",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Demonstration of the Logoot CRDT",
+  "main": "src/crdtDemo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ruud van Vliet | Trivento",
+  "license": "MIT",
+  "dependencies": {
+    "jquery": "2.2.3",
+    "logoot": "./src/logoot",
+    "json-stringify-pretty-compact": "lydell/json-stringify-pretty-compact"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.2"
+  }
+}
