@@ -1,12 +1,12 @@
 /*jslint node: true */
 
 var LogootCausal = require('./logoot-causal');
-var Views = require('./crdtDemoViews');
+var CrdtDemoCtrlr = require('./crdtDemoCtrlr');
 
 
 var lA = new LogootCausal('lcA');
 var lB = new LogootCausal('lcB');
 
-var views = new Views(lA, lB);
+var crdtDemoCtrlr = new CrdtDemoCtrlr(lA, lB);
 
 

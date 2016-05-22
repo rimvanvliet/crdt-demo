@@ -3,7 +3,7 @@
 var $ = require('jquery');
 var stringify = require('json-stringify-pretty-compact');
 
-function Views(lcA, lcB) {
+function CrdtDemoCtrlr(lcA, lcB) {
     "use strict";
     this.lcA = lcA;
     this.lcB = lcB;
@@ -134,4 +134,4 @@ function Views(lcA, lcB) {
     refreshViews();
 }
 
-module.exports = Views;
+module.exports = CrdtDemoCtrlr;
